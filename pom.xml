@@ -92,6 +92,16 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
+
+
+        <!-- Dependência do Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version> <!-- Ou a versão mais recente compatível -->
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
