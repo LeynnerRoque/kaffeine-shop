@@ -27,14 +27,11 @@ public class OrderResource {
 
     @POST
     public Response createOrder(@Valid CreateOrderRequest request) {
-        // 1. Mapeia o DTO de entrada para o Command da Porta de Entrada
         CreateOrderCommand command =
                 new CreateOrderCommand(request.getCustomerId(), request.getTotalAmount());
 
-        // 2. Executa o Caso de Uso (que cuida do domínio, banco e Kafka)
         Order createdOrder = createOrderUseCase.execute(command);
 
-        // 3. Mapeia o resultado do domínio para o DTO de resposta e retorna HTTP 201 (Created)
         OrderResponse response = new OrderResponse(createdOrder);
         return Response.status(Response.Status.CREATED).entity(response).build();
     }

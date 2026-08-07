@@ -1,7 +1,7 @@
 package br.com.kaffeine.shop.infra.messaging;
 
-import br.com.kaffeine.shop.domains.model.entities.Order;
 import br.com.kaffeine.shop.infra.ports.outputs.OrderEventPublisherPort;
+import br.com.kaffeine.shop.infra.ports.outputs.persistence.mappers.OrderMapper;
 import br.com.kaffeine.shop.infra.ports.outputs.requests.OrderEventPayload;
 import io.smallrye.reactive.messaging.kafka.KafkaRecord;
 import lombok.extern.slf4j.Slf4j;
@@ -15,28 +15,21 @@ import jakarta.inject.Inject;
 @Slf4j
 public class KafkaOrderEventPublisherAdapter implements OrderEventPublisherPort {
 
-    // O Emitter é o canal do MicroProfile Reactive Messaging que envia mensagens para o Kafka
     @Inject
-    @Channel("order-created-out") // Nome do canal que configuraremos no application.properties
+    @Channel("order-created-out")
     Emitter<OrderEventPayload> orderEmitter;
 
-    @Override
-    public void publishOrderCreated(Order order) {
-        // Mapeia o modelo de domínio para um DTO/Payload de evento leve
-        OrderEventPayload payload = new OrderEventPayload(
-                order.getId(),
-                order.getCustomerId(),
-                order.getTotalAmount(),
-                order.getStatus().name(),
-                order.getCreatedAt()
-        );
+    @Inject
+    OrderMapper orderMapper;
 
-        // Envia a mensagem para o tópico Kafka (usando o ID do pedido como chave para particionamento)
+    @Override
+    public void publishOrderCreated(OrderEventPayload payload) {
         try{
-            log.info("Chamada de Envio Kafka");
-            orderEmitter.send(KafkaRecord.of(order.getId(), payload));
+            log.info("Chamada de Envio Kafka...");
+            orderEmitter.send(KafkaRecord.of(payload.id(), payload));
+            log.info("Envio Kafka com Sucesso {}",payload.id());
         } catch (Exception e) {
-            log.info("Erro ao send chamada de Envio Kafka");
+            log.info("Erro ao send chamada de Envio Kafka {}",payload.id());
             throw new RuntimeException(e);
         }
 

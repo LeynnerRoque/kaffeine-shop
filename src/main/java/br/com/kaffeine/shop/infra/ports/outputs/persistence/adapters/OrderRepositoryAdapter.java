@@ -19,10 +19,10 @@ public class OrderRepositoryAdapter implements OrderRepositoryPort {
     }
 
     @Override
-    @Transactional // Garante que a operação ocorra dentro de uma transação com o banco
+    @Transactional
     public Order save(Order order) {
         OrderEntity entity = new OrderEntity(order);
-        panacheRepository.persist(entity); // Salva ou atualiza no MySQL
+        panacheRepository.persist(entity);
         return entity.toDomain();
     }
 
