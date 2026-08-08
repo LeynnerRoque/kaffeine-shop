@@ -2,15 +2,10 @@ package br.com.kaffeine.shop.api.controllers;
 
 
 import br.com.kaffeine.shop.api.requests.CreateOrderRequest;
-import br.com.kaffeine.shop.api.responses.OrderResponse;
-import br.com.kaffeine.shop.domains.model.entities.Order;
 import br.com.kaffeine.shop.infra.ports.inputs.requests.CreateOrderCommand;
 import br.com.kaffeine.shop.infra.ports.inputs.usecases.CreateOrderUseCase;
 import jakarta.validation.Valid;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -30,9 +25,13 @@ public class OrderResource {
         CreateOrderCommand command =
                 new CreateOrderCommand(request.getCustomerId(), request.getTotalAmount());
 
-        Order createdOrder = createOrderUseCase.execute(command);
-
-        OrderResponse response = new OrderResponse(createdOrder);
+        var response = createOrderUseCase.execute(command);
         return Response.status(Response.Status.CREATED).entity(response).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    public  Response findAllOrders(@PathParam("id") String id) {
+        return Response.accepted(createOrderUseCase.findOrder(id)).build();
     }
 }

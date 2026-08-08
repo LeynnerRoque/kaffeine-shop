@@ -1,5 +1,6 @@
 package br.com.kaffeine.shop.application;
 
+import br.com.kaffeine.shop.api.responses.OrderResponse;
 import br.com.kaffeine.shop.domains.model.entities.Order;
 import br.com.kaffeine.shop.infra.ports.inputs.requests.CreateOrderCommand;
 
@@ -25,9 +26,14 @@ public class CreateOrderUseCaseImpl implements CreateOrderUseCase {
     }
 
     @Override
-    public Order execute(CreateOrderCommand command) {
+    public OrderResponse execute(CreateOrderCommand command) {
         Order savedOrder = orderRepositoryPort.save(orderMapper.map(command));
         orderEventPublisherPort.publishOrderCreated(orderMapper.mapEvent(savedOrder));
-        return savedOrder;
+        return orderMapper.map(savedOrder);
+    }
+
+    @Override
+    public OrderResponse findOrder(String id) {
+        return orderMapper.map(orderRepositoryPort.findById(id).orElse(null));
     }
 }
