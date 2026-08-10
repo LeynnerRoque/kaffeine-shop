@@ -7,14 +7,14 @@ COPY . .
 # Localiza o pom.xml e executa o build no diretório correto
 RUN find . -name "pom.xml" | head -n 1 | xargs -I {} dirname {} | xargs -I {} sh -c 'cd {} && mvn clean package -DskipTests'
 
-# Estágio 2: Runtime (Copia o jar gerado usando um script sh seguro)
+# Estágio 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /deployments
 
---from=build
+# Copia os arquivos do estágio anterior
 COPY --from=build /build /build
 
-# Copia o jar gerado para app.jar de forma segura
+# Localiza o .jar executável gerado e o move para app.jar
 RUN find /build -name "*.jar" ! -name "*sources*" ! -name "*javadoc*" -exec cp {} ./app.jar \;
 
 EXPOSE 8080
