@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaffeine Order Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f8; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h2 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 0; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input, textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        button:hover { background-color: #0056b3; }
+        pre { background: #e9ecef; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 13px; }
+        .card { margin-bottom: 25px; padding: 15px; border: 1px solid #e1e4e8; border-radius: 6px; background: #fafbfc; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>☕ Kaffeine - Gerenciador de Pedidos</h2>
+
+    <!-- Seção 1: Enviar/Registrar Payload -->
+    <div class="card">
+        <h3>1. Enviar Novo Pedido</h3>
+        <div class="form-group">
+            <label for="payloadInput">Payload JSON:</label>
+            <textarea id="payloadInput" rows="5">{
+  "customerId": "SAA-0002",
+  "totalAmount": 50.00
+}</textarea>
+        </div>
+        <button onclick="enviarPedido()">Enviar Payload</button>
+        <pre id="postResponse">Aguardando envio...</pre>
+    </div>
+
+    <!-- Seção 2: Buscar por ID -->
+    <div class="card">
+        <h3>2. Consultar Pedido por ID</h3>
+        <div class="form-group">
+            <label for="orderIdInput">ID do Pedido (UUID):</label>
+            <input type="text" id="orderIdInput" placeholder="Ex: 6fb161b5-12ad-41e3-9b45-13721de97ad5">
+        </div>
+        <button onclick="buscarPedido()">Buscar Pedido</button>
+        <pre id="getResponse">Aguardando consulta...</pre>
+    </div>
+</div>
+
+<script>
+    // URL base da sua API Quarkus (ajuste a porta se necessário, ex: 8080 ou 8081)
+    const BASE_URL = 'http://localhost:8081';
+
+    async function enviarPedido() {
+        const payloadText = document.getElementById('payloadInput').value;
+        const responsePre = document.getElementById('postResponse');
+
+        try {
+            responsePre.textContent = "Enviando...";
+            const jsonPayload = JSON.parse(payloadText); // Valida se é um JSON válido
+
+            const response = await fetch(`${BASE_URL}/api/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(jsonPayload)
+            });
+
+            if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+
+            const data = await response.text();
+            responsePre.textContent = data ? JSON.stringify(JSON.parse(data), null, 2) : "Enviado com sucesso!";
+        } catch (error) {
+            responsePre.textContent = "Erro ao enviar: " + error.message;
+        }
+    }
+
+    async function buscarPedido() {
+        const orderId = document.getElementById('orderIdInput').value.trim();
+        const responsePre = document.getElementById('getResponse');
+
+        if (!orderId) {
+            responsePre.textContent = "Por favor, digite um ID válido.";
+            return;
+        }
+
+        try {
+            responsePre.textContent = "Buscando...";
+            const response = await fetch(`${BASE_URL}/api/orders/${orderId}`);
+
+            if (!response.ok) throw new Error(`Pedido não encontrado ou Erro HTTP: ${response.status}`);
+
+            const data = await response.json();
+            responsePre.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+            responsePre.textContent = "Erro ao buscar: " + error.message;
+        }
+    }
+</script>
+
+</body>
+</html>
