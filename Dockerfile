@@ -7,18 +7,13 @@ COPY . .
 # Localiza o pom.xml e executa o build no diretório correto
 RUN find . -name "pom.xml" | head -n 1 | xargs -I {} dirname {} | xargs -I {} sh -c 'cd {} && mvn clean package -DskipTests'
 
-# Estágio 2: Runtime
+# Estágio 2: Runtime (Captura o jar gerado independentemente do nome)
 FROM eclipse-temurin:21-jre-alpine
-ENV LANGUAGE='en_US:en'
 WORKDIR /deployments
 
-# Copia os diretórios do quarkus-app independentemente de onde o build os colocou
-COPY --from=build /build/**/target/quarkus-app/lib/ ./lib/
-COPY --from=build /build/**/target/quarkus-app/*.jar ./
-COPY --from=build /build/**/target/quarkus-app/app/ ./app/
-COPY --from=build /build/**/target/quarkus-app/quarkus/ ./quarkus/
+# Copia o arquivo .jar executável gerado na pasta target (excluindo sources/javadoc se houver)
+COPY --from=build /build/**/target/*-runner.jar ./app.jar || COPY --from=build /build/**/target/*.jar ./app.jar
 
 EXPOSE 8080
-USER 185
 
-ENTRYPOINT ["java", "-Dquarkus.http.host=0.0.0.0", "-Djava.util.logging.manager=org.jboss.logmanager.LogManager", "-jar", "quarkus-run.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
