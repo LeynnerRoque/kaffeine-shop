@@ -21,6 +21,9 @@ COPY --from=build /project/target/quarkus-app/*.jar /deployments/
 COPY --from=build /project/target/quarkus-app/app/ /deployments/app/
 COPY --from=build /project/target/quarkus-app/quarkus/ /deployments/quarkus/
 
+# Copia os certificados da pasta do projeto para a raiz do runtime
+COPY --from=build /project/src/main/resources/certs/ /deployments/certs/
+
 EXPOSE 8080
 USER 185
 
