@@ -1,92 +1,64 @@
-# kaffeine-shop
+# ☕ Kaffeine Shop (Backend API)
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+API de comércio eletrônico robusta e resiliente desenvolvida com **Quarkus (Java 21)**, projetada para alta performance, integração em tempo real com **Apache Kafka** e persistência segura em banco de dados relacional na nuvem.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+🔗 **Acesse a aplicação em produção:** [https://kaffeine-shop.onrender.com](https://kaffeine-shop.onrender.com)
 
-## Running the application in dev mode
+---
 
-You can run your application in dev mode that enables live coding using:
+## 📸 Demonstração Funcional
 
-```shell script
-./mvnw quarkus:dev
-```
+> *Visão geral da interface e funcionamento da aplicação integrada com mensageria e banco de dados em nuvem.*
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+|                         Tela Inicial / Catálogo                          |          Fluxo de Pedidos / Eventos Kafka          |
+|:------------------------------------------------------------------------:|:--------------------------------------------------:|
+| ![Tela Inicial](src/main/java/br/com/kaffeine/shop/docs/images/home.png) | ![Processamento de Pedidos](src/main/java/br/com/kaffeine/shop/docs/images/found.png) |
 
-## Packaging and running the application
+---
 
-The application can be packaged using:
+## 🚀 Tecnologias e Arquitetura
 
-```shell script
-./mvnw package
-```
+* **Java 21** & **Quarkus 3.x** (Fast JAR)
+* **Apache Kafka** (SmallRye Reactive Messaging - Mensageria assíncrona)
+* **Hibernate ORM / Panache** & **Flyway** (Gerenciamento de migrações e persistência)
+* **MySQL (Aiven Cloud)** (Banco de dados relacional)
+* **Docker & Dockerfile multi-stage** (Empacotamento e otimização para containers)
+* **Render** (Plataforma de Deploy em nuvem)
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+---
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+## 🔒 Segurança e Conectividade (Aiven Cloud)
 
-If you want to build an _über-jar_, execute the following command:
+A aplicação se conecta a serviços gerenciados na Aiven utilizando segurança avançada:
+* **Banco de Dados:** Conexão JDBC segura com credenciais isoladas via variáveis de ambiente.
+* **Kafka:** Conectividade protegida utilizando protocolo `SASL_SSL` (mecanismo `PLAIN`) e validação de certificados via arquivo truststore JKS (`client.truststore.jks`).
 
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
+---
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## ⚙️ Configuração e Variáveis de Ambiente
 
-## Creating a native executable
+Para rodar a aplicação localmente ou em produção, as seguintes variáveis de ambiente devem ser configuradas:
 
-You can create a native executable using:
+| Variável | Descrição |
+| :--- | :--- |
+| `AIVEN_URL_BROKER` | Endereço dos brokers do Kafka (Aiven) |
+| `AIVEN_AIVEN_PASSWORD` | Senha de autenticação do Kafka (SASL/PLAIN) |
+| `AIVEN_USER` | Usuário do banco de dados MySQL |
+| `AIVEN_PASSWORD` | Senha do banco de dados MySQL |
+| `AIVEN_URL_DB` | URL de conexão JDBC do MySQL |
+| `AIVEN_KEY_SET_ONE` | Senha do Truststore JKS do Kafka |
 
-```shell script
-./mvnw package -Dnative
-```
+---
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+## 🛠️ Como Executar Localmente
 
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
+### Pré-requisitos
+* JDK 21 instalado
+* Maven 3.9+ instalado
+* Docker (opcional)
 
-You can then execute your native executable with: `./target/kaffeine-shop-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- REST resources for Hibernate ORM with Panache ([guide](https://quarkus.io/guides/rest-data-panache)): Generate Jakarta REST resources for your Hibernate Panache entities and repositories
-- Flyway ([guide](https://quarkus.io/guides/flyway)): Handle your database schema migrations
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- Messaging - Kafka Connector ([guide](https://quarkus.io/guides/kafka-getting-started)): Connect to Kafka with Reactive Messaging
-- Micrometer OpenTelemetry Bridge ([guide](https://quarkus.io/guides/telemetry-micrometer-to-opentelemetry)): Micrometer registry implemented by the OpenTelemetry SDK
-- SmallRye Health ([guide](https://quarkus.io/guides/smallrye-health)): Monitor service health
-- JDBC Driver - MySQL ([guide](https://quarkus.io/guides/datasource)): Connect to the MySQL database via JDBC
-
-## Provided Code
-
-### REST Data with Panache
-
-Generating Jakarta REST resources with Panache
-
-[Related guide section...](https://quarkus.io/guides/rest-data-panache)
-
-
-### Messaging codestart
-
-Use Quarkus Messaging
-
-[Related Apache Kafka guide section...](https://quarkus.io/guides/kafka-reactive-getting-started)
-
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-### SmallRye Health
-
-Monitor your application's health using SmallRye Health
-
-[Related guide section...](https://quarkus.io/guides/smallrye-health)
+### Passo a passo:
+1. Clone o repositório:
+   ```bash
+   git clone [https://github.com/LeynnerRoque/kaffeine-shop.git](https://github.com/LeynnerRoque/kaffeine-shop.git)
+   cd kaffeine-shop
