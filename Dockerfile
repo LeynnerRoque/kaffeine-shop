@@ -1,12 +1,14 @@
-# 1. Imagem base com JDK 21 e Maven para buildar a aplicação
+# 1. Imagem base
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copia os arquivos do projeto para o container
+# Copia o pom.xml
 COPY pom.xml .
-COPY src ./src
 
-# Compila o projeto e gera o arquivo .jar (pulando os testes para ser rápido)
+# Copia a pasta src/main (e outras subpastas de src se existirem)
+COPY src/ ./src/
+
+# Compila o projeto
 RUN mvn clean package -DskipTests
 
 # 2. Imagem final leve apenas com o JRE para rodar o app
