@@ -1,15 +1,15 @@
-# 1. Imagem base
 FROM maven:3.9.6-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 
-# Copia o pom.xml
-COPY pom.xml .
+# Copia os arquivos necessários explicitamente
+COPY pom.xml /app/
+COPY src/ /app/src/
 
-# Copia a pasta src/main (e outras subpastas de src se existirem)
-COPY src/ ./src/
+# Verifica se os arquivos foram copiados antes de compilar
+RUN ls -la /app/src
 
-# Compila o projeto
 RUN mvn clean package -DskipTests
+
 
 # 2. Imagem final leve apenas com o JRE para rodar o app
 FROM eclipse-temurin:21-jre-alpine
