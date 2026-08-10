@@ -7,7 +7,7 @@ COPY . .
 # Localiza o pom.xml e executa o build no diretório correto
 RUN find . -name "pom.xml" | head -n 1 | xargs -I {} dirname {} | xargs -I {} sh -c 'cd {} && mvn clean package -DskipTests'
 
-# Estágio 2: Runtime (Quarkus Otimizado)
+# Estágio 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
 ENV LANGUAGE='en_US:en'
 WORKDIR /deployments
